@@ -30,12 +30,12 @@ public class Book {
     private String ISBN;
 
     @NotNull
-    private int publicationYear;
+    private Integer publicationYear;
 
     @NotNull
-    private int totalCopies;
+    private Integer totalCopies;
 
     @NotNull
-    private int availableCopies;
+    private Integer availableCopies;
 }
 
