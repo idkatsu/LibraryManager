@@ -13,9 +13,5 @@ public interface IBookRepository extends JpaRepository<Book, Long> {
 
     Optional<Book> findByISBN(String isbn);
 
-    List<Book> findByAuthor(String author);
-
-    List<Book> findByTitle(String title);
-
     List<Book> findByTitleAndAuthor(String title, String author);
 }

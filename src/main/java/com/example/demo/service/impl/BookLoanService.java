@@ -44,26 +44,6 @@ public class BookLoanService implements IBookLoanService {
         );
     }
 
-    private BookLoan mapToBookLoan(BookLoanDTO bookLoanDTO) {
-        Book book = bookRepository.findById(bookLoanDTO.getBookId())
-                .orElseThrow(() -> new RuntimeException("Книга не найдена"));
-
-        Reader reader = readerRepository.findById(bookLoanDTO.getReaderId())
-                .orElseThrow(() -> new RuntimeException("Читатель не найден"));
-
-        BookLoan bookLoan = new BookLoan();
-        bookLoan.setId(bookLoanDTO.getId());
-        bookLoan.setBook(book);
-        bookLoan.setReader(reader);
-        bookLoan.setLoanDate(bookLoanDTO.getLoanDate());
-        bookLoan.setDueDate(bookLoanDTO.getDueDate());
-        bookLoan.setReturnDate(bookLoanDTO.getReturnDate());
-        bookLoan.setStatus(bookLoanDTO.getStatus());
-
-        return bookLoan;
-    }
-
-
     @Override
     public BookLoanDTO createLoan(BookLoanDTO loanDto) {
         Book book = bookRepository.findById(loanDto.getBookId())

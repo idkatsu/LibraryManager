@@ -35,19 +35,17 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException ex,
             HttpServletRequest request
     ) {
-        // Список сообщений об ошибках для каждого некорректного поля
         List<String> validationErrors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        // Конструируем ErrorResponse с дополнительным списком ошибок
         ErrorResponse error = new ErrorResponse(
-                "Ошибка валидации входных данных",  // общее сообщение
-                HttpStatus.BAD_REQUEST.value(),     // 400
+                "Ошибка валидации входных данных",
+                HttpStatus.BAD_REQUEST.value(),
                 request.getRequestURI(),
-                validationErrors                    // детализированные ошибки
+                validationErrors
         );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
