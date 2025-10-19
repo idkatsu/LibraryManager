@@ -1,13 +1,15 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
-import com.example.demo.dto.BookDTO;
 import com.example.demo.dto.BookLoanDTO;
+import com.example.demo.exception.ConflictException;
+import com.example.demo.exception.ResourseNotFoundException;
 import com.example.demo.model.Book;
 import com.example.demo.model.BookLoan;
 import com.example.demo.model.Reader;
 import com.example.demo.repository.IBookLoanRepository;
 import com.example.demo.repository.IBookRepository;
 import com.example.demo.repository.IReaderRepository;
+import com.example.demo.service.interfaces.IBookLoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -92,10 +94,10 @@ public class BookLoanService implements IBookLoanService {
     @Override
     public BookLoanDTO returnLoan(Long loanId) {
         BookLoan loan = bookLoanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException("Выдача не найдена"));
+                .orElseThrow(() -> new ResourseNotFoundException("Выдача не найдена"));
 
         if (loan.getReturnDate() != null) {
-            throw new RuntimeException("Книга уже была возвращена");
+            throw new ConflictException("Книга уже была возвращена");
         }
 
         loan.setReturnDate(LocalDate.now());

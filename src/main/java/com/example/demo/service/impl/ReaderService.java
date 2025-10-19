@@ -1,8 +1,10 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dto.ReaderDTO;
+import com.example.demo.exception.ResourseNotFoundException;
 import com.example.demo.model.Reader;
 import com.example.demo.repository.IReaderRepository;
+import com.example.demo.service.interfaces.IReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,11 +60,15 @@ public class ReaderService implements IReaderService {
     public ReaderDTO getReaderById(Long id) {
         return readerRepository.findById(id)
                 .map(this::mapToReaderDTO)
-                .orElse(null);
+                .orElseThrow(() -> new ResourseNotFoundException("Книги с таким id нет"));
     }
 
     @Override
     public ReaderDTO updateReader(Long id, ReaderDTO readerDTO) {
+
+        readerRepository.findById(id)
+                .orElseThrow(() -> new ResourseNotFoundException("Книги с таким id нет"));
+
         Reader reader = mapToReader(readerDTO);
         reader.setId(id);
         Reader updated = readerRepository.save(reader);
@@ -71,6 +77,11 @@ public class ReaderService implements IReaderService {
 
     @Override
     public void deleteReader(Long id) {
+
+        if (!readerRepository.existsById(id)) {
+            throw new ResourseNotFoundException("Книги с таким id нет");
+        }
+
         readerRepository.deleteById(id);
     }
 }

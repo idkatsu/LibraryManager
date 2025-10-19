@@ -1,8 +1,11 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dto.BookDTO;
+import com.example.demo.exception.ConflictException;
+import com.example.demo.exception.ResourseNotFoundException;
 import com.example.demo.model.Book;
 import com.example.demo.repository.IBookRepository;
+import com.example.demo.service.interfaces.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +48,12 @@ public class BookService implements IBookService {
 
     @Override
     public BookDTO createBook(BookDTO bookDTO) {
+
+        bookRepository.findByISBN(bookDTO.getISBN())
+                .ifPresent(b -> {
+                    throw new ConflictException("Книга с таким ISBN уже существует");
+                });
+
         Book book = mapToBook(bookDTO);
         Book savedBook = bookRepository.save(book);
         return mapToBookDTO(savedBook);
@@ -61,11 +70,22 @@ public class BookService implements IBookService {
     public BookDTO getBookById(Long id) {
         return bookRepository.findById(id)
                 .map(this::mapToBookDTO)
-                .orElse(null);
+                .orElseThrow(() -> new ResourseNotFoundException("Книги с таким id нет"));
     }
 
     @Override
     public BookDTO updateBook(Long id, BookDTO bookDTO) {
+
+        Book existing = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourseNotFoundException("Книги с таким id нет"));
+
+        bookRepository.findByISBN(bookDTO.getISBN())
+                .filter(b -> !b.getId().equals(id))
+                .ifPresent(b -> {
+                            throw new ConflictException("Книга с таким ISBN уже существует");
+                        }
+                );
+
         Book book = mapToBook(bookDTO);
         book.setId(id);
         Book updateBook = bookRepository.save(book);
@@ -74,6 +94,10 @@ public class BookService implements IBookService {
 
     @Override
     public void deleteBook(Long id) {
+
+        if (!bookRepository.existsById(id)) {
+            throw new ResourseNotFoundException("Книги с таким id нет");
+        }
         bookRepository.deleteById(id);
     }
 

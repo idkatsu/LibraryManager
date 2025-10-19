@@ -1,8 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.BookLoanDTO;
-import com.example.demo.repository.IBookLoanRepository;
-import com.example.demo.service.IBookLoanService;
+import com.example.demo.service.interfaces.IBookLoanService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
